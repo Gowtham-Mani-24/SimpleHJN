@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Node App</title>
+</head>
+
+<body>
+  <h1>Greet User</h1>
+  <h2>Enter Your Name</h2>
+  <input type="text" id="nameInput" placeholder="Your Name" />
+  <button onclick="sendName()">Submit</button>
+
+  <p id="greeting"></p>
+
+  <h1>User List from backend</h1>
+  <button onclick="loadUsers()">Get List</button>
+  <ul id="userList"></ul>
+
+
+  <script>
+    function sendName() {
+
+      const name = document.getElementById('nameInput').value;
+
+      fetch('/greet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('greeting').textContent = data.message;
+        })
+        .catch(err => {
+          document.getElementById('greeting').textContent = 'Error: ' + err;
+        });
+    }
+
+    function loadUsers() {
+      fetch('/data')
+        .then(res => res.json())
+        .then(users => {
+          const list = document.getElementById('userList');
+          list.innerHTML = '';
+          users.forEach(user => {
+            const li = document.createElement('li');
+            li.textContent = `${user.id}: ${user.name}`;
+            list.appendChild(li);
+          });
+        })
+        .catch(err => {
+          console.log('Error', err);
+        })
+    }
+
+
+  </script>
+</body>
+
+</html>
